@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1e0d7c">
+  <title>Tarot Oracle - 命运之轮</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="./images/favicon.png">
+<link rel="apple-touch-icon" href="./images/favicon.png">
+</head>
+<body>
+  <div class="background-effects"></div>
+  <div class="app">
+    <header>
+      <h1>Tarot Oracle</h1>
+      <div class="miko-title">Miko みこ</div>
+      <div class="subtitle">灵魂的欲望是命运的先知<br>滑动命运之轮，感受量子纠缠的指引......</div>
+    </header>
+    <div class="controls">
+      <button id="shuffleBtn">洗牌展开 ✨</button>
+      <select id="spreadSelect">
+        <option value="1">单张指引</option>
+        <option value="3" selected>三张命运路径</option>
+        <option value="5">五张星辰视野</option>
+      </select>
+    </div>
+
+    <div id="catContainer">
+      <div class="cat">🐾</div>
+    </div>
+
+    <div id="wheelWrapper" class="wheel-wrapper">
+      <div id="cardContainer" class="card-container"></div>
+    </div>
+    <div class="action-area">
+      <button id="drawSelected" style="display:none;">揭晓宇宙指引 🔮</button>
+    </div>
+    <div id="interpretation" class="interpretation-area" style="display:none;"></div>
+  </div>
+  <div id="catCursor">🐾</div>
+  <canvas id="trailCanvas"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
