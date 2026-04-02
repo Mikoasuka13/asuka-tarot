@@ -176,7 +176,7 @@ const onDrag = (e) => {
   if (!isDragging) return;
   const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
   const deltaX = currentX - startX;
-  if (Math.abs(deltaX) > 12) {               /* 提高阈值，短按不误判拖动 */
+  if (Math.abs(deltaX) > 12) {               
     hasDragged = true;
     if (e.type.includes('touch')) e.preventDefault();
   }
@@ -225,13 +225,8 @@ function shuffleAndShowDeck() {
   deck.forEach((card, index) => {
     const cardElem = document.createElement('div');
     cardElem.className = 'deck-card';
-    cardElem.innerHTML = `
-      <div class="card-back">
-        <div class="back-text">
-          The soul's desire is the prophet of destiny. Through the silence of the mystical night, we seek truth hidden within the stars. Awakening the inner light, we follow the path of cosmic alignment...
-        </div>
-      </div>
-    `;
+    cardElem.innerHTML = `<div class="card-back"></div>`;   /* ← 已改成埃及荷鲁斯之眼新牌背 */
+
     const angle = index * angleStep;
     const tilt = Math.random() * 8 - 4;
     const baseTransform = `rotateY(${angle}deg) rotateX(${tilt}deg) translateZ(${ringRadius}px)`;
@@ -277,7 +272,6 @@ function selectCard(elem, card, cardAngle) {
     selectedCards = selectedCards.filter(c => c.name !== card.name);
     elem.style.transform = elem.dataset.baseTransform;
   } else {
-    /* 保留原逻辑：点击后自动转到正前方（抽牌仪式感） */
     let targetRotation = -cardAngle; 
     let currentMod = currentWheelRotation % 360;
     let diff = targetRotation - currentMod;
