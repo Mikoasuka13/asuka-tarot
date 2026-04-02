@@ -60,7 +60,7 @@ button, select {
 }
 button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 
-/* ==================== 手机端轮盘优化（全部问题一次性解决） ==================== */
+/* ==================== 轮盘紧凑 + 旋转固定 ==================== */
 .wheel-wrapper {
   position: relative;
   height: 48vh; 
@@ -76,7 +76,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   overflow: hidden;
   contain: layout;
   cursor: grab;
-  touch-action: none;           /* 关键：阻止拖动时页面/边框下滑 */
+  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -100,6 +100,8 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   border: 1px solid #122b1c;
   opacity: 0; 
   transform: scale(0); 
+  touch-action: manipulation;      /* 关键修复：手机点击正常 */
+  pointer-events: auto;
 }
 .deck-card:hover:not(.selected) { 
   box-shadow: 0 0 30px rgba(212, 175, 55, 0.6); 
@@ -171,15 +173,15 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   50% { transform: rotate(12deg); }
 }
 
-/* 解读区在手机上保持横向并排滚动（不再竖排） */
+/* 解读区（修复PC端“居中”问题） */
 .interpretation-area { 
   display: flex; 
   flex-wrap: nowrap; 
   overflow-x: auto; 
   gap: 16px; 
-  padding: 22px 30px;
+  padding: 22px 30px 22px 35px;   /* 左侧增加padding，让桌面也从左开始 */
   max-width: 100%; 
-  justify-content: flex-start; 
+  justify-content: flex-start !important; 
   background: rgba(10,5,30,0.95); 
   border-top: 1px solid rgba(255,153,204,0.3); 
 }
@@ -202,7 +204,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 #catCursor { position: fixed; font-size: 24px; pointer-events: none; z-index: 10000; text-shadow: 0 0 15px #ff66aa; transform: translate(-50%, -50%); }
 #trailCanvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
 
-/* 手机端专项微调（让环两侧完整可见 + 牌不挤） */
+/* 手机端专项微调 */
 @media (max-width: 600px) {
   .wheel-wrapper {
     height: 45vh;

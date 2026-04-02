@@ -162,9 +162,9 @@ function updateWheelTransform() {
   cardContainer.style.transform = `translateZ(-${ringRadius}px) rotateX(-12deg) rotateY(${currentWheelRotation}deg)`;
 }
 
+/* ==================== 事件修复：手机点击正常 + 防下滑 ==================== */
 const startDrag = (e) => {
   if (isShuffling) return; 
-  if (e.type.includes('touch')) e.preventDefault();   /* 防止页面下滑 */
   isDragging = true;
   hasDragged = false;
   startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
@@ -174,10 +174,12 @@ const startDrag = (e) => {
 
 const onDrag = (e) => {
   if (!isDragging) return;
-  if (e.type.includes('touch')) e.preventDefault();   /* 防止页面下滑 */
   const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
   const deltaX = currentX - startX;
-  if (Math.abs(deltaX) > 8) hasDragged = true; 
+  if (Math.abs(deltaX) > 12) {               /* 提高阈值，短按不误判拖动 */
+    hasDragged = true;
+    if (e.type.includes('touch')) e.preventDefault();
+  }
   currentWheelRotation = lastRotation + deltaX * 0.45; 
   updateWheelTransform();
 };
@@ -190,7 +192,7 @@ const stopDrag = () => {
 wheelWrapper.addEventListener('mousedown', startDrag);
 window.addEventListener('mousemove', onDrag);
 window.addEventListener('mouseup', stopDrag);
-wheelWrapper.addEventListener('touchstart', startDrag, {passive: false});
+wheelWrapper.addEventListener('touchstart', startDrag, {passive: true});
 window.addEventListener('touchmove', onDrag, {passive: false});
 window.addEventListener('touchend', stopDrag);
 
@@ -204,9 +206,8 @@ function shuffleAndShowDeck() {
   interpArea.innerHTML = '';
   cardContainer.innerHTML = '';
 
-  // ==================== 手机端轮盘优化 ====================
   const vw = window.innerWidth;
-  ringRadius = vw < 480 ? 255 : vw < 600 ? 315 : 580;   /* 关键：两侧环完整可见 */
+  ringRadius = vw < 480 ? 255 : vw < 600 ? 315 : 580;
 
   currentWheelRotation = 0;
   cardContainer.style.transition = 'none';
@@ -236,7 +237,17 @@ function shuffleAndShowDeck() {
     const baseTransform = `rotateY(${angle}deg) rotateX(${tilt}deg) translateZ(${ringRadius}px)`;
     cardElem.dataset.baseTransform = baseTransform;
     cardElem.style.transform = `rotateY(${angle}deg) rotateX(${tilt}deg) translateZ(0px) scale(0)`;
-    cardElem.addEventListener('click', () => selectCard(cardElem, card, angle));
+
+    /* 双事件绑定：PC用click，手机用touchend防误判 */
+    const selectHandler = () => selectCard(cardElem, card, angle);
+    cardElem.addEventListener('click', selectHandler);
+    cardElem.addEventListener('touchend', (e) => {
+      if (!hasDragged) {
+        e.preventDefault();
+        selectHandler();
+      }
+    });
+
     cardContainer.appendChild(cardElem);
 
     setTimeout(() => {
@@ -266,6 +277,7 @@ function selectCard(elem, card, cardAngle) {
     selectedCards = selectedCards.filter(c => c.name !== card.name);
     elem.style.transform = elem.dataset.baseTransform;
   } else {
+    /* 保留原逻辑：点击后自动转到正前方（抽牌仪式感） */
     let targetRotation = -cardAngle; 
     let currentMod = currentWheelRotation % 360;
     let diff = targetRotation - currentMod;
