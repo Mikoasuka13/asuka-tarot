@@ -60,7 +60,7 @@ button, select {
 }
 button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 
-/* ==================== 轮盘（手机端自然叠加版，像电脑端一样） ==================== */
+/* ==================== 轮盘（手机端自然叠加 + 牌已大幅放大） ==================== */
 .wheel-wrapper {
   position: relative;
   height: 48vh; 
@@ -194,7 +194,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 #catCursor { position: fixed; font-size: 24px; pointer-events: none; z-index: 10000; text-shadow: 0 0 15px #ff66aa; transform: translate(-50%, -50%); }
 #trailCanvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
 
-/* ==================== 手机端“像电脑端一样自然叠加”优化 ==================== */
+/* ==================== 手机端牌大幅放大 + 自然叠加 ==================== */
 @media (max-width: 600px) {
   .wheel-wrapper {
     height: 47vh;
@@ -203,7 +203,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
     perspective: 1600px;
   }
   .card-container {
-    width: clamp(46px, 5.6vw, 70px); 
-    height: clamp(78px, 9vw, 118px);
+    width: clamp(56px, 7vw, 88px);     /* ← 大幅放大 */
+    height: clamp(95px, 11.8vw, 148px); /* ← 大幅放大 */
   }
 }

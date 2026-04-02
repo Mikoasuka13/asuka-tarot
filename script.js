@@ -186,7 +186,7 @@ function shuffleAndShowDeck() {
 
   const vw = window.innerWidth;
   // ==================== 关键调整：手机端像电脑端一样自然叠加 ====================
-  ringRadius = vw < 600 ? 340 : 580;   // 适度缩小环 → 自然叠加
+  ringRadius = vw < 600 ? 355 : 580;   /* 配合放大后的牌尺寸 */
 
   currentWheelRotation = 0;
   cardContainer.style.transition = 'none';
