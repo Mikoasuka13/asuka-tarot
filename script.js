@@ -1,4 +1,4 @@
-const tarotDeck = [ /* 你提供的78张完整牌组已全部保留，一张不漏 */ 
+const tarotDeck = [ 
   {name:"愚者", upright:"纯真跃入未知，信任直觉开启新旅程。", reversed:"鲁莽、犹豫不决，因恐惧而止步。"},
   {name:"魔术师", upright:"专注力量，意志创造现实，奇迹显现。", reversed:"潜力分散，缺乏专注或操纵他人。"},
   {name:"女祭司", upright:"内在智慧低语，信任直觉看见隐藏真相。", reversed:"噪音遮蔽内心，忽视直觉或过于封闭。"},
@@ -106,6 +106,7 @@ let hasDragged = false;
 let isShuffling = false;
 let ringRadius = 700; 
 
+// ==================== 粒子拖尾 + 猫爪 ====================
 const canvas = document.getElementById('trailCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -155,38 +156,34 @@ function animateTrail() {
 }
 animateTrail();
 
+// ==================== 轮盘核心（已优化为平面可见78张） ====================
 const wheelWrapper = document.getElementById('wheelWrapper');
 const cardContainer = document.getElementById('cardContainer');
 
 function updateWheelTransform() {
-  cardContainer.style.transform = `translateZ(-${ringRadius}px) rotateX(-12deg) rotateY(${currentWheelRotation}deg)`;
+  cardContainer.style.transform = `translateZ(-${ringRadius}px) rotateX(-7deg) rotateY(${currentWheelRotation}deg)`;
 }
 
-/* ==================== 事件修复：手机点击正常 + 防下滑 ==================== */
-const startDrag = (e) => {
+const startDrag = (e) => { 
   if (isShuffling) return; 
-  isDragging = true;
-  hasDragged = false;
-  startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-  lastRotation = currentWheelRotation;
+  isDragging = true; hasDragged = false; 
+  startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; 
+  lastRotation = currentWheelRotation; 
   cardContainer.style.transition = 'none'; 
 };
 
-const onDrag = (e) => {
-  if (!isDragging) return;
-  const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-  const deltaX = currentX - startX;
-  if (Math.abs(deltaX) > 12) {               
-    hasDragged = true;
-    if (e.type.includes('touch')) e.preventDefault();
-  }
+const onDrag = (e) => { 
+  if (!isDragging) return; 
+  const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; 
+  const deltaX = currentX - startX; 
+  if (Math.abs(deltaX) > 12) { hasDragged = true; if (e.type.includes('touch')) e.preventDefault(); } 
   currentWheelRotation = lastRotation + deltaX * 0.45; 
-  updateWheelTransform();
+  updateWheelTransform(); 
 };
 
 const stopDrag = () => { 
   isDragging = false; 
-  cardContainer.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1)';
+  cardContainer.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1)'; 
 };
 
 wheelWrapper.addEventListener('mousedown', startDrag);
@@ -207,7 +204,7 @@ function shuffleAndShowDeck() {
   cardContainer.innerHTML = '';
 
   const vw = window.innerWidth;
-  ringRadius = vw < 480 ? 255 : vw < 600 ? 315 : 580;
+  ringRadius = vw < 480 ? 430 : vw < 600 ? 460 : 580;
 
   currentWheelRotation = 0;
   cardContainer.style.transition = 'none';
@@ -225,15 +222,18 @@ function shuffleAndShowDeck() {
   deck.forEach((card, index) => {
     const cardElem = document.createElement('div');
     cardElem.className = 'deck-card';
-    cardElem.innerHTML = `<div class="card-back"></div>`;   /* ← 已改成埃及荷鲁斯之眼新牌背 */
+    cardElem.innerHTML = `<div class="card-back"></div>`;
 
     const angle = index * angleStep;
-    const tilt = Math.random() * 8 - 4;
-    const baseTransform = `rotateY(${angle}deg) rotateX(${tilt}deg) translateZ(${ringRadius}px)`;
+    const tilt = Math.random() * 5 - 2.5;
+    
+    const zOffset = Math.sin(index * 1.3) * 12;
+    const yOffset = Math.cos(index * 0.9) * 4 - 3;
+
+    const baseTransform = `rotateY(${angle}deg) rotateX(${tilt}deg) translateY(${yOffset}px) translateZ(${ringRadius + zOffset}px)`;
     cardElem.dataset.baseTransform = baseTransform;
     cardElem.style.transform = `rotateY(${angle}deg) rotateX(${tilt}deg) translateZ(0px) scale(0)`;
 
-    /* 双事件绑定：PC用click，手机用touchend防误判 */
     const selectHandler = () => selectCard(cardElem, card, angle);
     cardElem.addEventListener('click', selectHandler);
     cardElem.addEventListener('touchend', (e) => {
@@ -248,13 +248,13 @@ function shuffleAndShowDeck() {
     setTimeout(() => {
       cardElem.style.opacity = '1';
       cardElem.style.transform = baseTransform;
-    }, index * 12 + 100); 
+    }, index * 11 + 85); 
   });
 
   setTimeout(() => { 
     isShuffling = false; 
     cardContainer.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1)';
-  }, deck.length * 12 + 600);
+  }, deck.length * 11 + 650);
 }
 
 function selectCard(elem, card, cardAngle) {
@@ -288,7 +288,7 @@ function selectCard(elem, card, cardAngle) {
     
     setTimeout(() => {
       const isMobile = window.innerWidth < 600;
-      const liftZ = isMobile ? 38 : 80;
+      const liftZ = isMobile ? 48 : 80;
       const scaleVal = isMobile ? 1.09 : 1.15;
       const liftY = isMobile ? -26 : -40;
       elem.style.transform = elem.dataset.baseTransform + ` translateY(${liftY}px) translateZ(${liftZ}px) scale(${scaleVal})`;
