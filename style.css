@@ -60,7 +60,7 @@ button, select {
 }
 button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 
-/* ==================== 轮盘（手机端自然叠加 + 牌已大幅放大） ==================== */
+/* ==================== 轮盘 ==================== */
 .wheel-wrapper {
   position: relative;
   height: 48vh; 
@@ -168,30 +168,33 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   100% { transform: scale(1.12); text-shadow: 0 0 35px #ffcc88, 0 0 55px #ffd700; }
 }
 
-/* ==================== 关键修复：猫爪光标 + 粒子拖尾 ==================== */
-#catCursor {
-  position: fixed;
-  font-size: 24px;
-  pointer-events: none;
-  z-index: 10000;
-  text-shadow: 0 0 15px #ff66aa;
-  transform: translate(-50%, -50%);
-  transition: transform 0.05s linear;
+/* ==================== 解读区优化（小一点 + 居中） ==================== */
+.interpretation-area { 
+  display: flex; 
+  flex-wrap: nowrap; 
+  overflow-x: auto; 
+  gap: 16px; 
+  padding: 22px 30px 22px 35px;
+  max-width: 100%; 
+  justify-content: center !important;   /* 改为居中 */
+  background: rgba(10,5,30,0.95); 
+  border-top: 1px solid rgba(255,153,204,0.3); 
 }
-#trailCanvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: screen;
+.interp-card { 
+  background: rgba(20,10,55,0.98); 
+  backdrop-filter: blur(12px); 
+  border: 1.5px solid #ff99cc; 
+  border-radius: 16px; 
+  padding: 12px; 
+  width: clamp(145px, 38vw, 178px);   /* 明显调小 */
+  flex: 0 0 auto; 
+  text-align: center; 
+  transition: all 0.3s ease; 
 }
+.interp-card img { width: 100%; height: auto; margin: 0 auto 10px; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+.interp-card h3 { font-size: 1.05rem; color: #d0bfff; }
+.interp-card p { margin-top: 8px; font-size: 0.84rem; line-height: 1.5; color: #e0d8ff; text-shadow: 0 0 6px #ff99cc; }
+.interp-card small { color: #ffcc88; display: block; margin-top: 7px; font-weight: bold; font-size: 0.92rem; }
 
-/* 手机端牌尺寸 */
-@media (max-width: 600px) {
-  .wheel-wrapper { perspective: 1600px; }
-  .card-container {
-    width: clamp(52px, 6.5vw, 78px); 
-    height: clamp(88px, 11vw, 128px);
-  }
-}
+#catCursor { position: fixed; font-size: 24px; pointer-events: none; z-index: 10000; text-shadow: 0 0 15px #ff66aa; transform: translate(-50%, -50%); }
+#trailCanvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }

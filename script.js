@@ -106,7 +106,7 @@ let hasDragged = false;
 let isShuffling = false;
 let ringRadius = 700; 
 
-// ==================== 粒子拖尾 + 猫爪光标（完整版） ====================
+// ==================== 粒子拖尾 + 猫爪光标 ====================
 const canvas = document.getElementById('trailCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -193,7 +193,7 @@ wheelWrapper.addEventListener('touchstart', startDrag, {passive: true});
 window.addEventListener('touchmove', onDrag, {passive: false});
 window.addEventListener('touchend', stopDrag);
 
-// ==================== 宇宙密码 + 洗牌 + 选中逻辑（完整版） ====================
+// ==================== 宇宙密码 + 高熵洗牌 ====================
 function cosmicAutoDraw(mode) {
   const messages = {
     3: "宇宙呼唤频率 3... 纯净的开始",
@@ -202,12 +202,12 @@ function cosmicAutoDraw(mode) {
   };
   if (!confirm(`🌌 ${messages[mode]}\n\n是否让命运之轮为你揭示指引？`)) return;
 
-  const shuffleTimes = mode === 3 ? 3 : mode === 6 ? 6 : 9;
+  const shuffleTimes = mode === 3 ? 5 : mode === 6 ? 8 : 12;
   const autoSelectCount = mode === 3 ? 1 : mode === 6 ? 3 : 5;
   shuffleAndShowDeckWithParams(shuffleTimes, autoSelectCount);
 }
 
-function shuffleAndShowDeckWithParams(shuffleTimes = 3, autoSelectCount = 0) {
+function shuffleAndShowDeckWithParams(shuffleTimes = 4, autoSelectCount = 0) {
   if(isShuffling) return;
   isShuffling = true;
   selectedCards = [];
@@ -225,12 +225,15 @@ function shuffleAndShowDeckWithParams(shuffleTimes = 3, autoSelectCount = 0) {
   updateWheelTransform();
 
   let deck = [...tarotDeck];
+  // 高熵多轮洗牌
   for (let round = 0; round < shuffleTimes; round++) {
     for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(getCosmicRandom() * (i + 1));
       [deck[i], deck[j]] = [deck[j], deck[i]];
     }
   }
+  // 二次量子打乱（真正无序）
+  deck.sort(() => getCosmicRandom() - 0.5);
 
   const angleStep = 360 / deck.length; 
   deck.forEach((card, index) => {
@@ -269,14 +272,26 @@ function shuffleAndShowDeckWithParams(shuffleTimes = 3, autoSelectCount = 0) {
     cardContainer.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1)';
 
     if (autoSelectCount > 0) {
-      const cards = cardContainer.children;
-      for (let i = 0; i < Math.min(autoSelectCount, cards.length); i++) {
-        const elem = cards[i];
-        const cardData = deck[i];
-        elem.classList.add('selected');
-        cardData.isUpright = getCosmicRandom() > 0.5;
-        selectedCards.push(cardData);
+      let tempDeck = [...deck];
+      let chosen = [];
+      while (chosen.length < autoSelectCount && tempDeck.length > 0) {
+        const idx = Math.floor(getCosmicRandom() * tempDeck.length);
+        const selectedCard = tempDeck.splice(idx, 1)[0];
+        selectedCard.isUpright = getCosmicRandom() > 0.5;
+        chosen.push(selectedCard);
       }
+      selectedCards = chosen;
+
+      const cards = cardContainer.children;
+      chosen.forEach(card => {
+        for (let elem of cards) {
+          if (elem.textContent.includes(card.name)) {
+            elem.classList.add('selected');
+            break;
+          }
+        }
+      });
+
       setTimeout(() => {
         document.getElementById('drawSelected').click();
       }, 800);
@@ -285,7 +300,7 @@ function shuffleAndShowDeckWithParams(shuffleTimes = 3, autoSelectCount = 0) {
 }
 
 function shuffleAndShowDeck() {
-  shuffleAndShowDeckWithParams(3, 0);
+  shuffleAndShowDeckWithParams(5, 0);
 }
 
 function selectCard(elem, card, cardAngle) {
