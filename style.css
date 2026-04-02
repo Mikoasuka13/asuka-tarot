@@ -60,7 +60,7 @@ button, select {
 }
 button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 
-/* ==================== 轮盘 ==================== */
+/* ==================== 轮盘（保持原样） ==================== */
 .wheel-wrapper {
   position: relative;
   height: 48vh; 
@@ -68,7 +68,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   width: 100vw;
   max-width: 100%;
   margin: 2px 0 8px;
-  padding-bottom: 45px;
+  padding-bottom: 28px;   /* ← 收缩下方留白 */
   display: flex;
   justify-content: center;
   align-items: center; 
@@ -126,9 +126,12 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   display: none;
 }
 
-.action-area { margin-bottom: 45px; min-height: 50px; }
+.action-area { 
+  margin-bottom: 22px;   /* ← 大幅收缩上下留白 */
+  min-height: 50px; 
+}
 
-/* 宇宙密码 */
+/* 宇宙密码（保持不变） */
 #cosmicCode {
   margin: 8px auto 12px;
   display: flex;
@@ -168,15 +171,16 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   100% { transform: scale(1.12); text-shadow: 0 0 35px #ffcc88, 0 0 55px #ffd700; }
 }
 
-/* ==================== 解读区优化（小一点 + 居中） ==================== */
+/* ==================== 解读区优化（往上挪 + 小一点 + 居中） ==================== */
 .interpretation-area { 
   display: flex; 
   flex-wrap: nowrap; 
   overflow-x: auto; 
   gap: 16px; 
-  padding: 22px 30px 22px 35px;
+  padding: 18px 30px 22px 35px;   /* 顶部padding收紧 */
+  margin-top: -12px;               /* 关键：往上挪 */
   max-width: 100%; 
-  justify-content: center !important;   /* 改为居中 */
+  justify-content: center !important; 
   background: rgba(10,5,30,0.95); 
   border-top: 1px solid rgba(255,153,204,0.3); 
 }
@@ -186,7 +190,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   border: 1.5px solid #ff99cc; 
   border-radius: 16px; 
   padding: 12px; 
-  width: clamp(145px, 38vw, 178px);   /* 明显调小 */
+  width: clamp(145px, 38vw, 178px); 
   flex: 0 0 auto; 
   text-align: center; 
   transition: all 0.3s ease; 
