@@ -4,7 +4,7 @@ body {
   color: #e0d8ff;
   font-family: 'Georgia', serif;
   min-height: 100vh;
-  overflow-x: hidden; /* 修复旋转时左右晃动 */
+  overflow-x: hidden;
   position: relative;
   cursor: none; 
 }
@@ -60,29 +60,32 @@ button, select {
 }
 button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 
-/* 轮盘紧凑 + 旋转固定（不再左右晃动） */
+/* ==================== 手机端轮盘优化（全部问题一次性解决） ==================== */
 .wheel-wrapper {
   position: relative;
-  height: 50vh; 
-  min-height: 380px;
+  height: 48vh; 
+  min-height: 340px;
   width: 100vw;
   max-width: 100%;
   margin: 2px 0 8px;
-  padding-bottom: 55px;
+  padding-bottom: 45px;
   display: flex;
   justify-content: center;
   align-items: center; 
-  perspective: 1400px; 
-  overflow: hidden; /* 固定边框，防止旋转乱晃 */
+  perspective: 1200px; 
+  overflow: hidden;
   contain: layout;
   cursor: grab;
+  touch-action: none;           /* 关键：阻止拖动时页面/边框下滑 */
+  user-select: none;
+  -webkit-user-select: none;
 }
 .wheel-wrapper:active { cursor: grabbing; }
 
 .card-container {
   position: relative;
-  width: clamp(55px, 6.5vw, 85px); 
-  height: clamp(95px, 10vw, 140px);
+  width: clamp(48px, 5.8vw, 78px); 
+  height: clamp(82px, 9.5vw, 125px);
   transform-style: preserve-3d; 
   will-change: transform;
 }
@@ -174,7 +177,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   flex-wrap: nowrap; 
   overflow-x: auto; 
   gap: 16px; 
-  padding: 22px 30px; /* 左右加大 padding，解决两边裁切 */
+  padding: 22px 30px;
   max-width: 100%; 
   justify-content: flex-start; 
   background: rgba(10,5,30,0.95); 
@@ -186,7 +189,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   border: 1.5px solid #ff99cc; 
   border-radius: 16px; 
   padding: 13px; 
-  width: 205px; 
+  width: clamp(165px, 46vw, 205px); 
   flex: 0 0 auto; 
   text-align: center; 
   transition: all 0.3s ease; 
@@ -198,3 +201,17 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 
 #catCursor { position: fixed; font-size: 24px; pointer-events: none; z-index: 10000; text-shadow: 0 0 15px #ff66aa; transform: translate(-50%, -50%); }
 #trailCanvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
+
+/* 手机端专项微调（让环两侧完整可见 + 牌不挤） */
+@media (max-width: 600px) {
+  .wheel-wrapper {
+    height: 45vh;
+    min-height: 305px;
+    padding-bottom: 35px;
+    perspective: 950px;
+  }
+  .card-container {
+    width: clamp(46px, 5.6vw, 70px); 
+    height: clamp(78px, 9vw, 118px);
+  }
+}

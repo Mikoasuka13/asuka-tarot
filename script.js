@@ -164,6 +164,7 @@ function updateWheelTransform() {
 
 const startDrag = (e) => {
   if (isShuffling) return; 
+  if (e.type.includes('touch')) e.preventDefault();   /* 防止页面下滑 */
   isDragging = true;
   hasDragged = false;
   startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
@@ -173,6 +174,7 @@ const startDrag = (e) => {
 
 const onDrag = (e) => {
   if (!isDragging) return;
+  if (e.type.includes('touch')) e.preventDefault();   /* 防止页面下滑 */
   const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
   const deltaX = currentX - startX;
   if (Math.abs(deltaX) > 8) hasDragged = true; 
@@ -188,8 +190,8 @@ const stopDrag = () => {
 wheelWrapper.addEventListener('mousedown', startDrag);
 window.addEventListener('mousemove', onDrag);
 window.addEventListener('mouseup', stopDrag);
-wheelWrapper.addEventListener('touchstart', startDrag, {passive: true});
-window.addEventListener('touchmove', onDrag, {passive: true});
+wheelWrapper.addEventListener('touchstart', startDrag, {passive: false});
+window.addEventListener('touchmove', onDrag, {passive: false});
 window.addEventListener('touchend', stopDrag);
 
 function shuffleAndShowDeck() {
@@ -202,14 +204,15 @@ function shuffleAndShowDeck() {
   interpArea.innerHTML = '';
   cardContainer.innerHTML = '';
 
-  ringRadius = window.innerWidth < 600 ? 380 : 580; // 优化后半径，避免底部遮挡
+  // ==================== 手机端轮盘优化 ====================
+  const vw = window.innerWidth;
+  ringRadius = vw < 480 ? 255 : vw < 600 ? 315 : 580;   /* 关键：两侧环完整可见 */
 
   currentWheelRotation = 0;
   cardContainer.style.transition = 'none';
   updateWheelTransform();
 
   let deck = [...tarotDeck];
-  // 最高级别量子熵：3轮彻底洗牌 + 每张牌独立量子倾斜
   for (let round = 0; round < 3; round++) {
     for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(getCosmicRandom() * (i + 1));
@@ -229,7 +232,7 @@ function shuffleAndShowDeck() {
       </div>
     `;
     const angle = index * angleStep;
-    const tilt = Math.random() * 8 - 4; // 量子纠缠倾斜
+    const tilt = Math.random() * 8 - 4;
     const baseTransform = `rotateY(${angle}deg) rotateX(${tilt}deg) translateZ(${ringRadius}px)`;
     cardElem.dataset.baseTransform = baseTransform;
     cardElem.style.transform = `rotateY(${angle}deg) rotateX(${tilt}deg) translateZ(0px) scale(0)`;
@@ -278,8 +281,11 @@ function selectCard(elem, card, cardAngle) {
     selectedCards.push(card);
     
     setTimeout(() => {
-        const liftZ = window.innerWidth < 600 ? 50 : 80;
-        elem.style.transform = elem.dataset.baseTransform + ` translateY(-40px) translateZ(${liftZ}px) scale(1.15)`;
+      const isMobile = window.innerWidth < 600;
+      const liftZ = isMobile ? 38 : 80;
+      const scaleVal = isMobile ? 1.09 : 1.15;
+      const liftY = isMobile ? -26 : -40;
+      elem.style.transform = elem.dataset.baseTransform + ` translateY(${liftY}px) translateZ(${liftZ}px) scale(${scaleVal})`;
     }, 150);
   }
 
