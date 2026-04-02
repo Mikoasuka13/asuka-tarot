@@ -60,7 +60,7 @@ button, select {
 }
 button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 
-/* ==================== 轮盘平面化优化（重点） ==================== */
+/* ==================== 轮盘（手机端自然叠加版，像电脑端一样） ==================== */
 .wheel-wrapper {
   position: relative;
   height: 48vh; 
@@ -72,7 +72,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   display: flex;
   justify-content: center;
   align-items: center; 
-  perspective: 2000px; 
+  perspective: 1600px; 
   overflow: hidden;
   contain: layout;
   cursor: grab;
@@ -163,7 +163,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   100% { transform: scale(1.12); text-shadow: 0 0 35px #ffcc88, 0 0 55px #ffd700; }
 }
 
-/* 解读区、猫爪等保持不变（与你上一个版本完全一致） */
+/* 解读区 */
 .interpretation-area { 
   display: flex; 
   flex-wrap: nowrap; 
@@ -194,16 +194,16 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 #catCursor { position: fixed; font-size: 24px; pointer-events: none; z-index: 10000; text-shadow: 0 0 15px #ff66aa; transform: translate(-50%, -50%); }
 #trailCanvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
 
-/* ==================== 手机端“平面展开”专项优化 ==================== */
+/* ==================== 手机端“像电脑端一样自然叠加”优化 ==================== */
 @media (max-width: 600px) {
   .wheel-wrapper {
-    height: 46vh;
-    min-height: 310px;
-    padding-bottom: 32px;
-    perspective: 2300px;           /* 超大透视 → 更接近平面 */
+    height: 47vh;
+    min-height: 325px;
+    padding-bottom: 38px;
+    perspective: 1600px;
   }
   .card-container {
-    width: clamp(38px, 4.7vw, 55px); 
-    height: clamp(66px, 8.1vw, 94px);
+    width: clamp(46px, 5.6vw, 70px); 
+    height: clamp(78px, 9vw, 118px);
   }
 }
