@@ -60,15 +60,15 @@ button, select {
 }
 button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 
-/* ==================== 轮盘滑动区间优化（关键修复） ==================== */
+/* ==================== 轮盘滑动区间最终优化（已大幅收紧） ==================== */
 .wheel-wrapper {
   position: relative;
-  height: 46vh; 
-  min-height: 320px;
+  height: 41vh;               /* ← 进一步缩小 */
+  min-height: 290px;
   width: 100vw;
   max-width: 100%;
   margin: 2px 0 8px;
-  padding-bottom: 22px;           /* ← 大幅收缩下方留白，滑动区间更合理 */
+  padding-bottom: 10px;       /* ← 大幅收缩，滑动区域更精准 */
   display: flex;
   justify-content: center;
   align-items: center; 
@@ -168,7 +168,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   100% { transform: scale(1.12); text-shadow: 0 0 35px #ffcc88, 0 0 55px #ffd700; }
 }
 
-/* ==================== 解读区（保持之前优化：小一点 + 居中） ==================== */
+/* 解读区（保持之前优化） */
 .interpretation-area { 
   display: flex; 
   flex-wrap: nowrap; 
