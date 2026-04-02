@@ -106,7 +106,7 @@ let hasDragged = false;
 let isShuffling = false;
 let ringRadius = 700; 
 
-// Particle、catCursor、animateTrail（完全不变）
+// ==================== 粒子拖尾 + 猫爪光标（完整版） ====================
 const canvas = document.getElementById('trailCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -156,6 +156,7 @@ function animateTrail() {
 }
 animateTrail();
 
+// ==================== 轮盘拖拽 ====================
 const wheelWrapper = document.getElementById('wheelWrapper');
 const cardContainer = document.getElementById('cardContainer');
 
@@ -163,9 +164,27 @@ function updateWheelTransform() {
   cardContainer.style.transform = `translateZ(-${ringRadius}px) rotateX(-7deg) rotateY(${currentWheelRotation}deg)`;
 }
 
-const startDrag = (e) => { if (isShuffling) return; isDragging = true; hasDragged = false; startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; lastRotation = currentWheelRotation; cardContainer.style.transition = 'none'; };
-const onDrag = (e) => { if (!isDragging) return; const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; const deltaX = currentX - startX; if (Math.abs(deltaX) > 12) { hasDragged = true; if (e.type.includes('touch')) e.preventDefault(); } currentWheelRotation = lastRotation + deltaX * 0.45; updateWheelTransform(); };
-const stopDrag = () => { isDragging = false; cardContainer.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1)'; };
+const startDrag = (e) => { 
+  if (isShuffling) return; 
+  isDragging = true; hasDragged = false; 
+  startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; 
+  lastRotation = currentWheelRotation; 
+  cardContainer.style.transition = 'none'; 
+};
+
+const onDrag = (e) => { 
+  if (!isDragging) return; 
+  const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; 
+  const deltaX = currentX - startX; 
+  if (Math.abs(deltaX) > 12) { hasDragged = true; if (e.type.includes('touch')) e.preventDefault(); } 
+  currentWheelRotation = lastRotation + deltaX * 0.45; 
+  updateWheelTransform(); 
+};
+
+const stopDrag = () => { 
+  isDragging = false; 
+  cardContainer.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1)'; 
+};
 
 wheelWrapper.addEventListener('mousedown', startDrag);
 window.addEventListener('mousemove', onDrag);
@@ -174,7 +193,21 @@ wheelWrapper.addEventListener('touchstart', startDrag, {passive: true});
 window.addEventListener('touchmove', onDrag, {passive: false});
 window.addEventListener('touchend', stopDrag);
 
-function shuffleAndShowDeck() {
+// ==================== 宇宙密码 + 洗牌 + 选中逻辑（完整版） ====================
+function cosmicAutoDraw(mode) {
+  const messages = {
+    3: "宇宙呼唤频率 3... 纯净的开始",
+    6: "宇宙呼唤频率 6... 平衡与流动",
+    9: "宇宙呼唤频率 9... 圆满与升维"
+  };
+  if (!confirm(`🌌 ${messages[mode]}\n\n是否让命运之轮为你揭示指引？`)) return;
+
+  const shuffleTimes = mode === 3 ? 3 : mode === 6 ? 6 : 9;
+  const autoSelectCount = mode === 3 ? 1 : mode === 6 ? 3 : 5;
+  shuffleAndShowDeckWithParams(shuffleTimes, autoSelectCount);
+}
+
+function shuffleAndShowDeckWithParams(shuffleTimes = 3, autoSelectCount = 0) {
   if(isShuffling) return;
   isShuffling = true;
   selectedCards = [];
@@ -185,15 +218,14 @@ function shuffleAndShowDeck() {
   cardContainer.innerHTML = '';
 
   const vw = window.innerWidth;
-  // ==================== 关键调整：手机端像电脑端一样自然叠加 ====================
-  ringRadius = vw < 600 ? 355 : 580;   /* 配合放大后的牌尺寸 */
+  ringRadius = vw < 600 ? 355 : 580;
 
   currentWheelRotation = 0;
   cardContainer.style.transition = 'none';
   updateWheelTransform();
 
   let deck = [...tarotDeck];
-  for (let round = 0; round < 3; round++) {
+  for (let round = 0; round < shuffleTimes; round++) {
     for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(getCosmicRandom() * (i + 1));
       [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -208,8 +240,6 @@ function shuffleAndShowDeck() {
 
     const angle = index * angleStep;
     const tilt = Math.random() * 6 - 3;
-    
-    // 轻微偏移 → 自然叠加 + 不穿模
     const zOffset = Math.sin(index * 1.1) * 8;
     const yOffset = Math.cos(index * 0.8) * 3 - 2;
 
@@ -237,7 +267,25 @@ function shuffleAndShowDeck() {
   setTimeout(() => { 
     isShuffling = false; 
     cardContainer.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1)';
+
+    if (autoSelectCount > 0) {
+      const cards = cardContainer.children;
+      for (let i = 0; i < Math.min(autoSelectCount, cards.length); i++) {
+        const elem = cards[i];
+        const cardData = deck[i];
+        elem.classList.add('selected');
+        cardData.isUpright = getCosmicRandom() > 0.5;
+        selectedCards.push(cardData);
+      }
+      setTimeout(() => {
+        document.getElementById('drawSelected').click();
+      }, 800);
+    }
   }, deck.length * 11 + 650);
+}
+
+function shuffleAndShowDeck() {
+  shuffleAndShowDeckWithParams(3, 0);
 }
 
 function selectCard(elem, card, cardAngle) {
@@ -301,6 +349,13 @@ document.getElementById('drawSelected').addEventListener('click', () => {
     area.appendChild(div);
   });
   area.scrollIntoView({behavior:'smooth'});
+});
+
+document.querySelectorAll('.cosmic-numbers .num').forEach(num => {
+  num.addEventListener('click', () => {
+    const mode = parseInt(num.dataset.mode);
+    cosmicAutoDraw(mode);
+  });
 });
 
 document.getElementById('shuffleBtn').addEventListener('click', shuffleAndShowDeck);
