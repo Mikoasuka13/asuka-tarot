@@ -60,15 +60,15 @@ button, select {
 }
 button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 
-/* ==================== 轮盘（保持原样） ==================== */
+/* ==================== 轮盘滑动区间优化（关键修复） ==================== */
 .wheel-wrapper {
   position: relative;
-  height: 48vh; 
-  min-height: 340px;
+  height: 46vh; 
+  min-height: 320px;
   width: 100vw;
   max-width: 100%;
   margin: 2px 0 8px;
-  padding-bottom: 28px;   /* ← 收缩下方留白 */
+  padding-bottom: 22px;           /* ← 大幅收缩下方留白，滑动区间更合理 */
   display: flex;
   justify-content: center;
   align-items: center; 
@@ -126,12 +126,9 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   display: none;
 }
 
-.action-area { 
-  margin-bottom: 22px;   /* ← 大幅收缩上下留白 */
-  min-height: 50px; 
-}
+.action-area { margin-bottom: 22px; min-height: 50px; }
 
-/* 宇宙密码（保持不变） */
+/* 宇宙密码 */
 #cosmicCode {
   margin: 8px auto 12px;
   display: flex;
@@ -171,14 +168,14 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   100% { transform: scale(1.12); text-shadow: 0 0 35px #ffcc88, 0 0 55px #ffd700; }
 }
 
-/* ==================== 解读区优化（往上挪 + 小一点 + 居中） ==================== */
+/* ==================== 解读区（保持之前优化：小一点 + 居中） ==================== */
 .interpretation-area { 
   display: flex; 
   flex-wrap: nowrap; 
   overflow-x: auto; 
   gap: 16px; 
-  padding: 18px 30px 22px 35px;   /* 顶部padding收紧 */
-  margin-top: -12px;               /* 关键：往上挪 */
+  padding: 18px 30px 22px 35px;
+  margin-top: -12px;
   max-width: 100%; 
   justify-content: center !important; 
   background: rgba(10,5,30,0.95); 
