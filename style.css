@@ -4,7 +4,7 @@ body {
   color: #e0d8ff;
   font-family: 'Georgia', serif;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: hidden; /* 修复旋转时左右晃动 */
   position: relative;
   cursor: none; 
 }
@@ -60,19 +60,21 @@ button, select {
 }
 button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 
-/* 轮盘紧凑上移 */
+/* 轮盘紧凑 + 旋转固定（不再左右晃动） */
 .wheel-wrapper {
   position: relative;
   height: 50vh; 
   min-height: 380px;
   width: 100vw;
+  max-width: 100%;
   margin: 2px 0 8px;
-  padding-bottom: 55px;   /* 加大底部空间，让按钮更靠下 */
+  padding-bottom: 55px;
   display: flex;
   justify-content: center;
   align-items: center; 
   perspective: 1400px; 
-  overflow: visible;
+  overflow: hidden; /* 固定边框，防止旋转乱晃 */
+  contain: layout;
   cursor: grab;
 }
 .wheel-wrapper:active { cursor: grabbing; }
@@ -143,7 +145,7 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
 }
 
 .action-area { 
-  margin-bottom: 45px;   /* 按钮再往下移一点，位置更适中 */
+  margin-bottom: 45px; 
   min-height: 50px; 
 }
 
@@ -166,20 +168,17 @@ button:hover { background: rgba(255,150,200,0.3); transform: translateY(-3px); }
   50% { transform: rotate(12deg); }
 }
 
-/* 解读区保持缩小 */
+/* 解读区在手机上保持横向并排滚动（不再竖排） */
 .interpretation-area { 
   display: flex; 
   flex-wrap: nowrap; 
   overflow-x: auto; 
   gap: 16px; 
-  padding: 20px 12px; 
+  padding: 22px 30px; /* 左右加大 padding，解决两边裁切 */
   max-width: 100%; 
-  justify-content: center; 
+  justify-content: flex-start; 
   background: rgba(10,5,30,0.95); 
   border-top: 1px solid rgba(255,153,204,0.3); 
-}
-@media (max-width: 768px) { 
-  .interpretation-area { flex-direction: column; align-items: center; } 
 }
 .interp-card { 
   background: rgba(20,10,55,0.98); 
